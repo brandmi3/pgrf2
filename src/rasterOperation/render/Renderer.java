@@ -2,18 +2,20 @@ package rasterOperation.render;
 
 import rasterOperation.model.Part;
 import rasterOperation.model.Solid;
-import rasterOperation.model.Type;
+import rasterOperation.model.Vertex;
 import transforms.Mat4;
+import util.Lerp;
 
 import java.awt.image.BufferedImage;
 import java.nio.Buffer;
 
 public class Renderer {
     private Mat4 viewMatrix;
-   /* private RestariserTriangle rt;
+    private RestariserTriangle rt;
     private RestariserLine rl;
-    private RestariserPoint rp;*/
-   private BufferedImage img;
+    private RestariserPoint rp;
+    private BufferedImage img;
+    private Lerp<Vertex> lerp = new Lerp();
 
     public Renderer(BufferedImage img) {
         this.img = img;
@@ -21,9 +23,9 @@ public class Renderer {
 
     //TODO zabalit do aplikace randerer, umístění , matice, RIP
 
-    public void render(Solid solid){
-        for(Part part:solid.getParts()){
-            switch (part.getType()){
+    public void render(Solid solid) {
+        for (Part part : solid.getParts()) {
+            switch (part.getType()) {
                 case POINT:
 
                     break;
@@ -31,15 +33,63 @@ public class Renderer {
 
                     break;
                 case TRIANGLE:
+                    for (int i = 0; i < part.getCount(); i++) {
+                        Vertex a, b, c;
+                        int index = 3 * i + part.getStart();
+                        a = solid.getVerticies().get(solid.getIndicies().get(index));
+                        b = solid.getVerticies().get(solid.getIndicies().get(index + 1));
+                        c = solid.getVerticies().get(solid.getIndicies().get(index + 2));
 
+
+                        renderTriangle(a, b, c);
+                    }
                     break;
                 default:
 
                     break;
-            };
+            }
+            ;
         }
 
     }
+
+    private void renderTriangle(Vertex a, Vertex b, Vertex c) {
+        //todo transformace, orez -rychle, zadne 'z' nebude zaporne,
+
+
+
+        if (a.getPoint3D().getZ() > b.getPoint3D().getZ()) {
+            Vertex p = a;
+            a = b;
+            b = p;
+        } else if (b.getPoint3D().getZ() > c.getPoint3D().getZ()) {
+            Vertex p = b;
+            b = c;
+            c = p;
+        } else if (a.getPoint3D().getZ() > b.getPoint3D().getZ()) {
+            Vertex p = a;
+            a = b;
+            b = p;
+        }
+        // detekovat 4 varianty
+        //za pozorovatele
+        if(a.getPoint3D().getZ()<0) {
+            return;
+        }
+
+        if(b.getPoint3D().getZ()<0) {
+            //dopocitat
+            double t1 = -b.getPoint3D().getZ()/(a.getPoint3D().getZ()-b.getPoint3D().getZ());
+            Vertex ab = lerp.lerp(b,a,t1);
+            Vertex ac = lerp.lerp();
+            rt.rasterizace(a,ab,ac);
+            return;
+        }
+
+
+
+    }
+
     public void lineDDA(int x1, int y1, int x2, int y2, int color) {
 
         float k, g, h; //G = PŘÍRŮSTEK X, H = PŘÍRŮSTEK Y
@@ -82,6 +132,7 @@ public class Renderer {
             y += h;
         }
     }
+
     private void drawPixel(int x, int y, int color) {
         if (x < 0 || x >= img.getWidth()) return;
         if (y < 0 || y >= img.getHeight()) return;

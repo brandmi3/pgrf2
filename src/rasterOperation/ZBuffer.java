@@ -24,7 +24,7 @@ public class ZBuffer<T> implements Raster<T> {
 
     @Override
     public void setPixel(int x, int y, T value) {
-        pixels.set(y * width + x, value);
+        pixels.add(y * width + x, value);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class PgrfFrame extends JFrame implements MouseMotionListener {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(new Dimension(500,500));
         setVisible(true);
-        setTitle("Grafika 2");
+        setTitle("Pgrf 2");
         setLocationRelativeTo(null);
 
         add(jPanel, BorderLayout.CENTER);
