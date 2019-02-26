@@ -2,6 +2,7 @@ package rasterOperation;
 
 import transforms.Col;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class VisibilityZBuffer {
@@ -10,13 +11,14 @@ public class VisibilityZBuffer {
 
     public VisibilityZBuffer(int width, int height) {
         this.imageBuffer = new ImageBuffer(width, height);
+        this.zBuffer = new ZBuffer(width,height);
 
     }
 
     public void put(int x, int y, float z, Col color) {
         if (zBuffer.getPixel(x, y) > z) {
             imageBuffer.setPixel(x, y, color.getRGB());
-            zBuffer.setPixel(x, y, z);
+            zBuffer.setPixel(x, y, 0.8f);
         }
     }
 
@@ -24,13 +26,14 @@ public class VisibilityZBuffer {
 
         for (int x = 0; x < imageBuffer.getWidth(); x++) {
             for (int y = 0; y < imageBuffer.getHeight(); y++) {
-                zBuffer.setPixel(x, y, 1f);
+                zBuffer.getPixels().add(1f);
+//                zBuffer.setPixel(x, y, 1f);
             }
         }
         imageBuffer.clear(color);
     }
 
     public BufferedImage getBufferedImage(){
-        return null;//todo
+       return imageBuffer.getBufferedImage();
     }
 }

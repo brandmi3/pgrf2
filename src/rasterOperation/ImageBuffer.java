@@ -23,7 +23,7 @@ public class ImageBuffer implements Raster<Integer> {
 
     @Override
     public void setPixel(int x, int y, Integer value) {
-
+        bufferedImage.setRGB(x,y,value);
     }
 
     @Override
@@ -43,4 +43,7 @@ public class ImageBuffer implements Raster<Integer> {
                 bufferedImage.getWidth(), bufferedImage.getHeight());
     }
 
+    public BufferedImage getBufferedImage() {
+        return bufferedImage;
+    }
 }

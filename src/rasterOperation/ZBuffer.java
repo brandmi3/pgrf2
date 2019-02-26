@@ -36,4 +36,12 @@ public class ZBuffer<T> implements Raster<T> {
     public int getHeight() {
         return this.height;
     }
+
+    public List<T> getPixels() {
+        return pixels;
+    }
+
+    public void setPixels(List<T> pixels) {
+        this.pixels = pixels;
+    }
 }
